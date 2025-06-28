@@ -1,5 +1,7 @@
 #include "cppdb.h"
 
+using namespace cppdb;
+
 CppDB::CppDB(){
     
 }

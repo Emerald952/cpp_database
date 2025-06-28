@@ -5,6 +5,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace cppdb;
+
 //intialize dbname and fullpath
 Database::Database(std::string dbname, std::string fullpath) 
     : m_name(dbname), m_fullpath(fullpath){

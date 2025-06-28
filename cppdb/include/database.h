@@ -3,6 +3,8 @@
 
 #include<string>
 
+namespace cppdb{
+
 class Database{
     public:
         //Constructir that takes dbname and its fullpath to represent an exisiting or new database
@@ -24,4 +26,5 @@ class Database{
         std::string m_fullpath;
 };
 
+}
 #endif

@@ -1,7 +1,9 @@
 #include <iostream>
 #include "cxxopts.hpp"
 #include "include/cppdb.h"
+
 using namespace std;
+using namespace cppdb;
 
 cxxopts::Options options("cppdb-cli", "CLI for cppdb");
 

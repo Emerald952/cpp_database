@@ -6,6 +6,8 @@
 #include<string>
 #include "database.h"
 
+namespace cppdb{
+
 class CppDB{
     public:
         CppDB();
@@ -14,4 +16,5 @@ class CppDB{
         static Database loadDB(std::string& dbname);
 };
 
+}
 #endif

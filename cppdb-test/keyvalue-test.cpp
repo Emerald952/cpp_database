@@ -9,7 +9,7 @@ TEST_CASE("Store and retrieve a value", "[setKeyValue, getKeyValue]"){
 
     SECTION("Basic set and get"){
         std::string dbname;
-        Database db(CppDB::createEmptyDB(dbname));
+        cppdb::Database db(cppdb::CppDB::createEmptyDB(dbname));
         //We would be successful when
         //Retrieved value is the same as stored value
         std::string key("simplestring");

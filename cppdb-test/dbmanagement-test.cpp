@@ -18,7 +18,7 @@ TEST_CASE("Create a new empty database", "[createEmptyDB]"){
         //this create a db named myemptydb
         std::string dbname("myemptydb");
         //Call the database creation fuction through CppDB
-        Database db(CppDB::createEmptyDB(dbname));
+        cppdb::Database db(cppdb::CppDB::createEmptyDB(dbname));
 
         //Check if directory was created or not
         REQUIRE(fs::is_directory(fs::status(db.getDirectory())));
@@ -41,9 +41,9 @@ TEST_CASE("load an existing database", "[loadDB]"){
 
     SECTION("Default settings"){
         std::string dbname("myemptydb");
-        Database db(CppDB::createEmptyDB(dbname));
+        cppdb::Database db(cppdb::CppDB::createEmptyDB(dbname));
 
-        Database db2(CppDB::loadDB(dbname));
+        cppdb::Database db2(cppdb::CppDB::loadDB(dbname));
 
         REQUIRE(fs::is_directory(fs::status(db.getDirectory())));
 
