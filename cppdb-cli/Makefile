@@ -4,10 +4,10 @@ include ../cppdb/common.mk
 TARGET = cppdb-cli
 
 # Source files
-SRCS = $(wildcard sources/*.cpp)
+SRCS = $(wildcard *.cpp)
 
 # Object files
-OBJS = $(patsubst sources/%.cpp, %.o, $(SRCS))
+OBJS = $(patsubst %.cpp, %.o, $(SRCS))
 
 # Default rule
 all: ../cppdb/libcppdb.a $(TARGET)
@@ -15,6 +15,10 @@ all: ../cppdb/libcppdb.a $(TARGET)
 # Build executable
 $(TARGET): $(OBJS)
 	$(CXX) $(OBJS) $(LDFLAGS) -o $@
+
+#Compile .cpp to .o file of same name
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Clean rule
 clean:

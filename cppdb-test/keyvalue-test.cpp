@@ -1,5 +1,5 @@
 #include "catch.hpp"
-#include "cppdb.h"
+#include "include/cppdb.h"
 
 TEST_CASE("Store and retrieve a value", "[setKeyValue, getKeyValue]"){
     //Story:

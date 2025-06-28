@@ -2,7 +2,7 @@
 #include <filesystem>
 #include <string>
 
-#include "cppdb.h"
+#include "include/cppdb.h"
 
 //Shortens for std::filesystem to fs
 namespace fs = std::filesystem;
@@ -52,5 +52,6 @@ TEST_CASE("load an existing database", "[loadDB]"){
 
         db.destroy();
         REQUIRE(!fs::exists(fs::status(db.getDirectory())));
+    }
     
 }
