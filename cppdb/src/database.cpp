@@ -1,22 +1,52 @@
-#include "include/database.h"
 #include <iostream>
 #include <fstream>
 #include <filesystem>
 
+#include "include/database.h"
+#include "include/extensions/extdatabase.h"
+
 namespace fs = std::filesystem;
 
 using namespace cppdb;
+using namespace cppdbext;
 
-//intialize dbname and fullpath
-Database::Database(std::string dbname, std::string fullpath) 
-    : m_name(dbname), m_fullpath(fullpath){
+// Hidden database: Impl class here
+class EmbeddedDB::Impl : public IDatabase{
+    public:
+        Impl(std::string dbname, std::string fullpath);
+        ~Impl();
+
+        std::string                                 getDirectory(void);
+
+        //KEY-VALUE USE CASES
+        void                                        setKeyValue(std::string key, std::string value);
+        std::string                                 getKeyValue(std::string key);
+
+        //MANAGEMENT FUNCTION
+        static const std::unique_ptr<IDatabase>      createEmptyDB(std::string dbname);
+
+        static const std::unique_ptr<IDatabase>      load(std::string dbname);
+        void                    destroy();
+    private:
+        std::string m_name;
+        std::string m_fullpath;
     
+};
+
+EmbeddedDB::Impl::Impl(std::string dbname, std::string fullpath)
+    : m_name(dbname), m_fullpath(fullpath)  
+{
+    ;
 }
 
-//MANAGEMENT FUNCTIONS
 
-//static function that creates a new empty database
-Database Database::createEmptyDB(std::string dbname){
+EmbeddedDB::Impl::~Impl(){
+
+}
+
+
+//MANAGEMENT FUNCTIONS
+const std::unique_ptr<IDatabase> EmbeddedDB::Impl::createEmptyDB(std::string dbname){
     std::string basedir(".cppdb");
 
     //checks if basedir exist, or not
@@ -30,19 +60,17 @@ Database Database::createEmptyDB(std::string dbname){
     if(!fs::exists(dbfolder)){
         fs::create_directory(dbfolder);
     }
-
-    return Database(dbname, dbfolder);
-
+    return std::make_unique<EmbeddedDB::Impl>(dbname, dbfolder);
 }
 
-Database Database::load(std::string dbname){
+const std::unique_ptr<IDatabase> EmbeddedDB::Impl::load(std::string dbname){
     std::string basedir(".cppdb");
     std::string dbfolder(basedir + "/" + dbname);
-    return Database(dbname, dbfolder);
+    return std::make_unique<EmbeddedDB::Impl>(dbname, dbfolder);
 
 }
 
-void Database::destroy(){
+void EmbeddedDB::Impl::destroy(){
     if(fs::exists(m_fullpath)){
         fs::remove_all(m_fullpath);
     }
@@ -50,11 +78,11 @@ void Database::destroy(){
 
 //INSTANCE USER FUNCTIONS
 
-std::string Database::getDirectory(){
+std::string EmbeddedDB::Impl::getDirectory(){
     return m_fullpath;
 }
 
-void Database::setKeyValue(std::string key, std::string value){
+void EmbeddedDB::Impl::setKeyValue(std::string key, std::string value){
     //output file stream to write data 
     std::ofstream os;
     //std::ios::trunc->overwrite the file if it exist
@@ -64,7 +92,7 @@ void Database::setKeyValue(std::string key, std::string value){
     os.close();
 }
 
-std::string Database::getKeyValue(std::string key){
+std::string EmbeddedDB::Impl::getKeyValue(std::string key){
     //opens the file for reading
     std::ifstream t(m_fullpath + "/" + key + "_string.kv");
     std::string value;
@@ -84,4 +112,46 @@ std::string Database::getKeyValue(std::string key){
     value.assign((std::istreambuf_iterator<char>(t)), 
                     std::istreambuf_iterator<char>()); 
     return value;
+}
+
+
+//High level Database class API implementation below:
+
+
+
+//EMBEDDED DATABASE
+EmbeddedDB::EmbeddedDB(std::string dbname, std::string fullpath) 
+    : mImpl(std::make_unique<EmbeddedDB::Impl>(dbname,fullpath))
+{
+    
+}
+
+EmbeddedDB::~EmbeddedDB(){
+
+}
+
+const std::unique_ptr<IDatabase> EmbeddedDB::createEmptyDB(std::string dbname){
+    return EmbeddedDB::Impl::createEmptyDB(dbname);
+}
+
+const std::unique_ptr<IDatabase> EmbeddedDB::load(std::string dbname){
+    return EmbeddedDB::Impl::load(dbname);
+}
+
+void EmbeddedDB::destroy(){
+    mImpl->destroy();
+}
+
+//INSTANCE USER FUNCTIONS
+
+std::string EmbeddedDB::getDirectory(){
+   return mImpl->getDirectory();
+}
+
+void EmbeddedDB::setKeyValue(std::string key, std::string value){
+    mImpl->setKeyValue(key,value);
+}
+
+std::string EmbeddedDB::getKeyValue(std::string key){
+    mImpl->getKeyValue(key);
 }

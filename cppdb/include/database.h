@@ -1,29 +1,31 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#include<string>
+#include <string>
+#include <memory>
 
+//namespace groups everything to cppdb::, prevents name collisions
 namespace cppdb{
 
-class Database{
+//virtual fuction =>  no direct implementation
+class IDatabase{
     public:
-        //Constructir that takes dbname and its fullpath to represent an exisiting or new database
-        Database(std::string dbname, std::string fullpath);
+        IDatabase() = default;
+        virtual ~IDatabase() = default;
 
-        //gets path to the database folder on disk
-        std::string getDirectory(void);
+        //return filesystem path of the database instance
+        virtual std::string                             getDirectory(void) = 0;
 
-        void setKeyValue(std::string key, std::string value);
-        std::string getKeyValue(std::string key);
+        //KEY-VALUE USE CASES
+        virtual void                                    setKeyValue(std::string key, std::string value) = 0;
+        virtual std::string                             getKeyValue(std::string key) = 0;
 
-        // static fuction responsible for creating empty database folder 
-        static Database createEmptyDB(std::string dbname);
-
-        static Database load(std::string dbname);
-        void destroy();
-    protected:
-        std::string m_name;
-        std::string m_fullpath;
+        //MANAGEMENT FUNCTION
+    
+        static const std::unique_ptr<IDatabase>         createEmptyDB(std::string dbname);
+        static const std::unique_ptr<IDatabase>         load(std::string dbname);
+        virtual void                                    destroy() = 0;
+    
 };
 
 }

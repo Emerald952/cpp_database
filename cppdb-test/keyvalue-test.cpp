@@ -1,5 +1,5 @@
 #include "catch.hpp"
-#include "include/cppdb.h"
+#include "cppdb.h"
 
 TEST_CASE("Store and retrieve a value", "[setKeyValue, getKeyValue]"){
     //Story:
@@ -9,14 +9,14 @@ TEST_CASE("Store and retrieve a value", "[setKeyValue, getKeyValue]"){
 
     SECTION("Basic set and get"){
         std::string dbname;
-        cppdb::Database db(cppdb::CppDB::createEmptyDB(dbname));
+        std::unique_ptr<cppdb::IDatabase> db(cppdb::CppDB::createEmptyDB(dbname));
         //We would be successful when
         //Retrieved value is the same as stored value
         std::string key("simplestring");
         std::string value("Some value");
-        db.setKeyValue(key, value);
-        REQUIRE(value == db.getKeyValue(key));
+        db->setKeyValue(key, value);
+        REQUIRE(value == db->getKeyValue(key));
 
-        db.destroy();
+        db->destroy();
     }
 }

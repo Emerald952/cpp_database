@@ -1,6 +1,6 @@
 #include <iostream>
 #include "cxxopts.hpp"
-#include "include/cppdb.h"
+#include "cppdb.h"
 
 using namespace std;
 using namespace cppdb;
@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
         }
         //Create database
         string dbname(result["n"].as<string>());
-        Database db(CppDB::createEmptyDB(dbname));
+        std::unique_ptr<IDatabase> db(CppDB::createEmptyDB(dbname));
         return 0;
     }
     if(result.count("d")){
@@ -42,8 +42,8 @@ int main(int argc, char* argv[]) {
         }
         //Destroy database
         string dbname(result["n"].as<string>());
-        Database db(CppDB::loadDB(dbname));
-        db.destroy();
+        std::unique_ptr<IDatabase> db(CppDB::loadDB(dbname));
+        db->destroy();
         return 0;
     }
     if(result.count("s")){
@@ -66,8 +66,8 @@ int main(int argc, char* argv[]) {
         string dbname(result["n"].as<string>());
         string k(result["k"].as<string>());
         string v(result["v"].as<string>());
-        Database db(CppDB::loadDB(dbname));
-        db.setKeyValue(k,v);
+        std::unique_ptr<IDatabase> db(CppDB::loadDB(dbname));
+        db->setKeyValue(k,v);
         return 0;
     }
     if(result.count("g")){
@@ -85,8 +85,8 @@ int main(int argc, char* argv[]) {
         //Get key values from database
         string dbname(result["n"].as<string>());
         string k(result["k"].as<string>());
-        Database db(CppDB::loadDB(dbname));
-        cout<<db.getKeyValue(k)<<endl;
+        std::unique_ptr<IDatabase> db(CppDB::loadDB(dbname));
+        cout<<db->getKeyValue(k)<<endl;
         return 0;
     }
 
